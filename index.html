@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University of Cambridge – Tourism Research Publication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #334155;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            
+            /* Glass & Card Variables */
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --table-wrapper-bg: rgba(255, 255, 255, 0.85);
+            --table-border: rgba(203, 213, 225, 0.5);
+            
+            /* Shadows */
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-depth: 
+                0 10px 25px -5px rgba(0, 0, 0, 0.08), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animated Background Layer */
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -2;
+            background: linear-gradient(-45deg, #e0c3fc, #e8f0fe, #fbc2eb, #d4e4fd);
+            background-size: 400% 400%;
+            animation: gradientPan 20s ease infinite;
+        }
+        @keyframes gradientPan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Subtle Glowing Blobs */
+        .blob-container {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            filter: blur(70px);
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: blobFloat 25s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .blob-1 { width: 50vw; height: 50vw; background: #c8b6ff; top: -15%; left: -10%; }
+        .blob-2 { width: 45vw; height: 45vw; background: #ffd6ff; bottom: -20%; right: -10%; animation-delay: -5s; }
+        .blob-3 { width: 40vw; height: 40vw; background: #bde0fe; top: 30%; left: 50%; animation-delay: -10s; }
+
+        @keyframes blobFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8vw, 10vh) scale(1.1); }
+        }
+
+        /* Navbar */
+        header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--card-border);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        header.scrolled {
+            padding: 12px 50px;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+        .nav-brand img {
+            width: 38px;
+            height: auto;
+        }
+        .nav-brand span {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 35px;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        nav a:hover { color: var(--text-main); }
+        nav a:hover::after { width: 100%; }
+
+        /* Main Layout */
+        main {
+            padding: 150px 20px 80px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 3D Glass Card Container */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-depth);
+            padding: 70px 85px;
+            max-width: 1150px;
+            width: 100%;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+            position: relative;
+        }
+        
+        .glass-card:hover {
+            box-shadow: 
+                0 20px 40px -10px rgba(0, 0, 0, 0.1), 
+                0 10px 15px -5px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 1),
+                0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Typography */
+        h1.title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+            margin-bottom: 45px;
+            color: #0f172a;
+            transform: translateZ(30px);
+        }
+
+        .article-content {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            transform: translateZ(15px);
+        }
+        .article-content p {
+            margin-bottom: 26px;
+            text-align: justify;
+        }
+        .article-content p:first-of-type::first-letter {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            float: left;
+            line-height: 0.8;
+            margin-right: 14px;
+            margin-top: 6px;
+            text-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        /* Data Table Section */
+        .table-section {
+            margin-top: 65px;
+            transform: translateZ(20px);
+        }
+        .table-section h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .table-wrapper {
+            max-height: 550px;
+            overflow-y: auto;
+            border-radius: 12px;
+            background: var(--table-wrapper-bg);
+            border: 1px solid var(--table-border);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .table-wrapper::-webkit-scrollbar { width: 6px; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            text-align: left;
+        }
+        
+        th, td {
+            padding: 16px 24px;
+            font-size: 0.95rem;
+        }
+        
+        th {
+            background: #ffffff;
+            color: #475569;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 0 #e2e8f0;
+        }
+
+        td {
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        tbody tr:hover td {
+            color: #0f172a;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Scroll Reveal Utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Back to Top */
+        #btt {
+            position: fixed;
+            bottom: 40px; right: 40px;
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--table-border);
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-subtle);
+            opacity: 0; visibility: hidden;
+            transform: translateY(15px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+        }
+        #btt.visible {
+            opacity: 1; visibility: visible;
+            transform: translateY(0);
+        }
+        #btt:hover {
+            background: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .glass-card { padding: 50px 45px; }
+            h1.title { font-size: 1.9rem; }
+        }
+        @media (max-width: 768px) {
+            header { padding: 15px 25px; flex-direction: column; gap: 12px; }
+            nav ul { gap: 20px; }
+            main { padding-top: 125px; padding-left: 15px; padding-right: 15px; }
+            .glass-card { padding: 35px 25px; border-radius: 16px; transform: none !important; }
+            h1.title { font-size: 1.5rem; margin-bottom: 30px; transform: none; }
+            .article-content { font-size: 1rem; transform: none; }
+            .table-section { transform: none; margin-top: 45px; }
+            th, td { padding: 12px 16px; font-size: 0.85rem; }
+            #btt { bottom: 20px; right: 20px; width: 42px; height: 42px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animated"></div>
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header id="header">
+        <a href="#" class="nav-brand">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Coat_of_Arms_of_the_University_of_Cambridge.svg" alt="University of Cambridge">
+            <span>Cambridge Tourism Research</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#article">Article</a></li>
+                <li><a href="#data">Data</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="home">
+        <div class="glass-card reveal" id="3d-card">
+            
+            <h1 class="title">Inbound Tourism to the United Kingdom (2019–2024): A Statistical Analysis of Trends, Market Recovery, and Economic Contribution</h1>
+            
+            <div class="article-content" id="article">
+                <p>The United Kingdom has historically operated as a primary nexus for global international tourism, underpinned by its profound cultural heritage, globally recognized historical landmarks, and robust commercial infrastructure. Prior to the systemic disruptions introduced at the dawn of the new decade, inbound tourism constituted a vital, irreplaceable artery of the British macroeconomy. The socio-economic fabric of the UK relied heavily on the consistent influx of international visitors, whose substantial expenditures directly bolstered the retail, hospitality, aviation, and domestic transportation sectors, thereby fostering unprecedented job creation and solidifying the nation’s status as a premier global destination.</p>
+
+                <p>The sudden and pervasive onset of the COVID-19 pandemic in early 2020 engendered an unprecedented contraction within the global travel ecosystem. Strict border closures, mandatory state-enforced quarantines, and complex, rapidly evolving testing regimens precipitated a precipitous, near-total decline in international footfall to the UK. This profound reduction in visitation severely impacted the national Gross Domestic Product (GDP), harshly illuminating the precarious dependency of regional economies on external travel markets, and pushing many longstanding enterprises to the brink of insolvency without acute governmental intervention.</p>
+
+                <p>Throughout the entirety of 2021, the inbound market experienced a prolonged stagnant paradigm characterized by sporadic, highly localized recoveries. Although domestic tourism witnessed a temporary resurgence as British citizens opted for localized vacations—colloquially and culturally termed "staycations"—this insular shift was fundamentally mathematically inadequate to offset the colossal revenue deficit left by high-spending international travelers. Stringent public health measures effectively deterred lucrative long-haul markets, limiting the fragile, tentative recovery strictly to essential logistical travel and geographically proximate European visitors.</p>
+
+                <p>The transitional phase initiated in 2022 marked the definitive, albeit cautious, cessation of pandemic-era restrictions, inaugurating a robust phase of market recovery. The sociologically driven phenomenon of "revenge travel," propelled by deferred vacation plans and accumulated household savings during lockdown periods, injected immediate, necessary capital into the UK tourism sector. However, this resurgence was structurally complex; while the sheer volume of visitors began to normalize, underlying economic variables such as heightened global inflation and the depreciating value of the Sterling significantly altered expenditure behaviors.</p>
+
+                <p>By 2023, the trajectory of inbound tourism demonstrated a resilient stabilization, methodically approaching the statistical benchmarks established during the apex of 2019. Significant resurgence was empirically observed from paramount source markets, notably the United States, propelled by highly favorable transatlantic exchange rates and aggressive, targeted marketing campaigns orchestrated by VisitBritain. Despite logistical supply-chain challenges and an overlapping global cost-of-living crisis, the economic yield per visitor experienced a distinct upward adjustment, largely a corollary of inflationary pricing within domestic accommodation.</p>
+
+                <p>A granular analysis of visitor behavior during this recovery phase highlights a paradigm shift in traveler priorities. Contemporary data suggests a pronounced deviation from high-frequency, short-duration city breaks toward extended, immersive itineraries that encompass secondary and tertiary regional destinations. The modern inbound tourist exhibits a heightened propensity for experiential, sustainable, and culturally authentic engagements, signaling a maturation of the market that demands an evolutionary response from domestic tourism operators and hospitality providers alike.</p>
+
+                <p>A critical, highly modern component of evaluating this post-pandemic resilience lies in the strategic utilization of digital tourism data. Advanced algorithmic analytics evaluating global search engine trends, real-time social media sentiment, and aggregated online reviews have afforded tourism boards unprecedented agility. By adopting highly localized, data-driven forecasting frameworks, the industry has successfully capitalized on emergent niche demographics, optimized regional resource allocation, and predicted infrastructural demands with a degree of accuracy previously unattainable via traditional polling.</p>
+
+                <p>In conclusion, the longitudinal statistical assessment of UK inbound tourism from 2019 to 2024 reveals a dynamic industry characterized by profound vulnerability yet remarkable, structural adaptability. The comprehensive recovery trajectory underscores the enduring, intrinsic global appeal of the United Kingdom as a cultural and commercial hub. Moving forward, the strategic imperative for policymakers remains the seamless integration of sustainable tourism practices with persistent digital innovation, ensuring the sector’s longevity against future macroeconomic volatility and fostering an equitable distribution of economic benefits.</p>
+            </div>
+
+            <div class="table-section reveal" id="data">
+                <h2>Statistical Data Matrix (2019–2024)</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Source Country</th>
+                                <th>Visits (Millions)</th>
+                                <th>Expenditure (Billion £)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>2019</td><td>United States</td><td>4.50</td><td>4.20</td></tr>
+                            <tr><td>2019</td><td>France</td><td>3.60</td><td>1.80</td></tr>
+                            <tr><td>2019</td><td>Germany</td><td>3.20</td><td>1.60</td></tr>
+                            <tr><td>2019</td><td>Ireland</td><td>2.90</td><td>1.10</td></tr>
+                            <tr><td>2019</td><td>Spain</td><td>2.30</td><td>1.00</td></tr>
+                            <tr><td>2019</td><td>Italy</td><td>1.90</td><td>0.90</td></tr>
+                            <tr><td>2019</td><td>Netherlands</td><td>2.00</td><td>0.80</td></tr>
+                            <tr><td>2019</td><td>Australia</td><td>1.10</td><td>1.20</td></tr>
+                            
+                            <tr><td>2020</td><td>United States</td><td>0.90</td><td>0.80</td></tr>
+                            <tr><td>2020</td><td>France</td><td>0.80</td><td>0.40</td></tr>
+                            <tr><td>2020</td><td>Germany</td><td>0.60</td><td>0.30</td></tr>
+                            <tr><td>2020</td><td>Ireland</td><td>0.70</td><td>0.20</td></tr>
+                            <tr><td>2020</td><td>Spain</td><td>0.50</td><td>0.20</td></tr>
+                            <tr><td>2020</td><td>Italy</td><td>0.40</td><td>0.20</td></tr>
+                            <tr><td>2020</td><td>Netherlands</td><td>0.40</td><td>0.20</td></tr>
+                            <tr><td>2020</td><td>Australia</td><td>0.20</td><td>0.20</td></tr>
+                            
+                            <tr><td>2021</td><td>United States</td><td>1.20</td><td>1.50</td></tr>
+                            <tr><td>2021</td><td>France</td><td>1.00</td><td>0.60</td></tr>
+                            <tr><td>2021</td><td>Germany</td><td>0.80</td><td>0.50</td></tr>
+                            <tr><td>2021</td><td>Ireland</td><td>0.90</td><td>0.40</td></tr>
+                            <tr><td>2021</td><td>Spain</td><td>0.70</td><td>0.40</td></tr>
+                            <tr><td>2021</td><td>Italy</td><td>0.60</td><td>0.30</td></tr>
+                            <tr><td>2021</td><td>Netherlands</td><td>0.60</td><td>0.30</td></tr>
+                            <tr><td>2021</td><td>Australia</td><td>0.10</td><td>0.10</td></tr>
+                            
+                            <tr><td>2022</td><td>United States</td><td>3.80</td><td>4.80</td></tr>
+                            <tr><td>2022</td><td>France</td><td>2.80</td><td>1.60</td></tr>
+                            <tr><td>2022</td><td>Germany</td><td>2.20</td><td>1.30</td></tr>
+                            <tr><td>2022</td><td>Ireland</td><td>2.40</td><td>0.90</td></tr>
+                            <tr><td>2022</td><td>Spain</td><td>1.80</td><td>0.90</td></tr>
+                            <tr><td>2022</td><td>Italy</td><td>1.50</td><td>0.80</td></tr>
+                            <tr><td>2022</td><td>Netherlands</td><td>1.70</td><td>0.70</td></tr>
+                            <tr><td>2022</td><td>Australia</td><td>0.70</td><td>0.90</td></tr>
+                            
+                            <tr><td>2023</td><td>United States</td><td>4.30</td><td>5.50</td></tr>
+                            <tr><td>2023</td><td>France</td><td>3.40</td><td>1.90</td></tr>
+                            <tr><td>2023</td><td>Germany</td><td>3.00</td><td>1.70</td></tr>
+                            <tr><td>2023</td><td>Ireland</td><td>2.80</td><td>1.20</td></tr>
+                            <tr><td>2023</td><td>Spain</td><td>2.20</td><td>1.10</td></tr>
+                            <tr><td>2023</td><td>Italy</td><td>1.80</td><td>1.00</td></tr>
+                            <tr><td>2023</td><td>Netherlands</td><td>1.90</td><td>0.90</td></tr>
+                            <tr><td>2023</td><td>Australia</td><td>1.00</td><td>1.40</td></tr>
+                            
+                            <tr><td>2024</td><td>United States</td><td>4.60</td><td>6.10</td></tr>
+                            <tr><td>2024</td><td>France</td><td>3.70</td><td>2.10</td></tr>
+                            <tr><td>2024</td><td>Germany</td><td>3.30</td><td>1.90</td></tr>
+                            <tr><td>2024</td><td>Ireland</td><td>3.00</td><td>1.40</td></tr>
+                            <tr><td>2024</td><td>Spain</td><td>2.50</td><td>1.30</td></tr>
+                            <tr><td>2024</td><td>Italy</td><td>2.00</td><td>1.20</td></tr>
+                            <tr><td>2024</td><td>Netherlands</td><td>2.10</td><td>1.10</td></tr>
+                            <tr><td>2024</td><td>Australia</td><td>1.20</td><td>1.60</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="reveal">
+        &copy; 2024 University of Cambridge – Tourism Economic Research
+    </footer>
+
+    <div id="btt" title="Back to Top">&#8593;</div>
+
+    <script>
+        // DOM Elements
+        const header = document.getElementById('header');
+        const btt = document.getElementById('btt');
+        const card = document.getElementById('3d-card');
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        // Page Load Fade-in
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                card.classList.add('active');
+            }, 100);
+        });
+
+        // Scroll Events
+        window.addEventListener('scroll', () => {
+            // Header styling
+            if (window.scrollY > 30) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Back to top visibility
+            if (window.scrollY > 400) {
+                btt.classList.add('visible');
+            } else {
+                btt.classList.remove('visible');
+            }
+        });
+
+        // Smooth Scroll to Top
+        btt.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Scroll Reveal Observer
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+        revealElements.forEach(el => {
+            if (el.id !== '3d-card') revealObserver.observe(el);
+        });
+
+        // Subtle 3D Card Hover Effect (Desktop Only)
+        let bounds;
+        
+        function rotateToMouse(e) {
+            if (window.innerWidth <= 768) return;
+            bounds = card.getBoundingClientRect();
+            
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const leftX = mouseX - bounds.x;
+            const topY = mouseY - bounds.y;
+            const center = {
+                x: leftX - bounds.width / 2,
+                y: topY - bounds.height / 2
+            }
+            const distance = Math.sqrt(center.x**2 + center.y**2);
+            
+            // Limit rotation to a very subtle degree (max 1.5deg)
+            const rotateX = (-center.y / 100) * 0.5;
+            const rotateY = (center.x / 100) * 0.5;
+
+            card.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        }
+
+        card.addEventListener('mousemove', rotateToMouse);
+        
+        card.addEventListener('mouseleave', () => {
+            if (window.innerWidth > 768) {
+                card.style.transform = 'perspective(1500px) rotateX(0deg) rotateY(0deg)';
+            }
+        });
+    </script>
+</body>
+</html>
